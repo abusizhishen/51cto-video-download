@@ -82,7 +82,7 @@ headers = {
 
 time1 = time.time()
 obj = cto()
-#77 164
+# courses = [77, 164,1691]
 course_id = 1691
 path = 'd:/videos/course'
 
