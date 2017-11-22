@@ -1,14 +1,19 @@
-import json,requests,re,os,threading,asyncio,math, time, random
+# -*- coding: utf-8 -*-
+import json,requests,re,os, time, random
 from bs4 import BeautifulSoup
 
 class cto(object):
-
     def train(self, headers, train_id, path):
         os.path.exists(path) or os.mkdir(path)
         print('获取课程列表')
         courses = obj.get_train_courses(headers, train_id)
 
+        #打印course名称
         for course in courses:
+            print(course['course_name'])
+
+        for course in courses:
+
             train_course_id = int(course['train_course_id'])
             file_path = path + '/'+course['number']+'.'+course['course_name'].replace(':',' ')
             os.path.exists(file_path) or os.mkdir(file_path)
@@ -34,7 +39,7 @@ class cto(object):
 
     def download_video(self,filename,urls):
         time.sleep(random.uniform(0, 1))
-        print('正在下载-'+filename)
+        print(u'正在下载-'+filename)
         file = open(filename, 'ab')
         for i in urls:
             res = requests.get(i)
@@ -111,11 +116,17 @@ headers = {
 
 time1 = time.time()
 obj = cto()
-#trains = [77, 164, 94, 139]
-train_id = 94
-path = 'f:/videos/%d'%(train_id)
-path = 'f:/videos/wejob/Python高级自动化开发工程师微职位/'#%d'%(train_id)
-# path = 'd:/深度学习'
+trains = [
+    165, #人工智能
+    77,
+    164,
+    94, #Python高级自动化开发工程师微职位
+    139
+]
+
+train_id = 165
+#path = '%d'%(train_id)
+path = u'../学习'
 # obj.show_train_course_list(headers,train_id)
 # res = obj.get_train_courses(headers, train_id)
 #res = obj.get_train_course_info(headers,train_id,190)
