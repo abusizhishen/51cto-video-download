@@ -16,4 +16,5 @@ pip install requests
 pip install bs4
 
 运行
-python wejob.py
+python wejob.py train_id  #替换train_id为需要的微职位id
+微职位可在微职位.json中查看

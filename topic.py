@@ -1,7 +1,10 @@
-import json,requests,re,os,threading,asyncio,math, time, random
+#encoding=utf-8
+import json,requests,re,os,threading,math, time, random,sys
 from bs4 import BeautifulSoup
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
-class cto(object):
+class Topic(object):
     def topic(self, headers, topic_id, path):
         topic = self.get_train_courses(headers,topic_id)
         file_path = path+'/%s'%(topic['name'])
@@ -92,7 +95,7 @@ headers = {
 }
 
 time1 = time.time()
-obj = cto()
+obj = Topic()
 topics = {
 
 }

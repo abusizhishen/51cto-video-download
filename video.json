@@ -1,0 +1,24 @@
+{
+
+  //微职位详情查看地址,替换train_id为 微职位id
+  //http////edu.51cto.com/center/wejob/index/view?id=train_id&force=3&orig=try
+  "wejob" : [
+    77,  // Linux高薪运维培训全程班第3期--老男孩,
+    94,  // #Python高级自动化开发工程师微职位,
+    115, // 直通名企：Linux高端云计算与架构师微职位,
+    116, // Linux高端运维工程师微职位,
+    139, // Python全栈开发工程师【微职位】,
+    164, // OpenStack云计算管理工程师微职位,
+    165, // 人工智能,
+    166, // Python网络爬虫工程师直播就业班课程,
+    167  // 人工智能系列精品课-机器人人机对话系统
+  ],
+
+  "courses_ids" : [
+    9263,
+    1691,
+    10417,
+    10069, //人人都会python数据分析之python3快速入门【最新】
+    10933  //python爬虫
+ ]
+}

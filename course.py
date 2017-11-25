@@ -1,60 +1,61 @@
-import json,requests,re,os,threading,asyncio,math, time, random
+#encoding=utf-8
+import json,requests,re,os,threading,math,time,random,sys,cto
 from bs4 import BeautifulSoup
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
-class cto(object):
-    def course(self, headers, course_id, path):
+class Course(object):
+    def course(self, headers, course_id, path = '../学习'):
         course_name = self.get_course_info(course_id)
         path = path+'/'+course_name
-        os.path.exists(path) or os.mkdir(path)
-        lessons = obj.get_course_list(headers, course_id)
+        lessons = self.get_lesson_list(headers, course_id)
 
+        self.show_lessons(lessons)
+        #如果分为很多章节
         if lessons['chapter']:
             for capter_id,lesson in lessons['chapter'].items():
                 file_path = path +'/%s'%(lesson['title'])
-                os.path.exists(file_path) or os.mkdir(file_path)
-                for i in lesson['lesson']:
-                    lesson_id = int(i['lesson_id'])
-                    video_id = int(i['video_id'])
-                    filename = file_path + "/%d.%s.ts" % (i['number'], i['title'].replace('/','&'))
-
-                    if os.path.exists(filename): continue
-                    urls = self.get_download_url(headers,lesson_id, video_id)
-                    self.download_video(filename, urls)
+                self.lesson_download(lesson['lesson'],file_path)
         else:
-            for lesson in lessons['lesson']:
-                lesson_id = int(lesson['lesson_id'])
-                video_id = int(lesson['video_id'])
-                filename = path + "/%d.%s.ts" % (lesson['number'], lesson['title'])
-
-                if os.path.exists(filename): continue
-                urls = self.get_download_url(headers,lesson_id, video_id)
-                self.download_video(filename, urls)
+            self.lesson_download(lessons['lesson'],path)
         return
 
     def get_download_url(self,headers,lesson_id,video_id):
         url_m3u8 = 'http://edu.51cto.com/center/player/play/get-lesson-info?type=course&lesson_type=course&sign=999&lesson_id=%d' % (lesson_id)
         res = requests.get(url_m3u8,headers=headers).text
 
-        url = json.loads(res)['dispatch_list'][1]['value'][0]['url']
-        #url = 'http://edu.51cto.com//center/player/play/m3u8?lesson_id=%s&id=%d&dp=high&type=course&lesson_type=course'%(lesson_id,video_id)
+        if res != 'nobuy':
+            url = json.loads(res)['dispatch_list'][1]['value'][0]['url']
+            # url = 'http://edu.51cto.com//center/player/play/m3u8?lesson_id=%s&id=%d&dp=high&type=course&lesson_type=course'%(lesson_id,video_id)
+            res = requests.get(url)
+            return re.findall(r'https.*', res.text)
+        else:
+            return[]
 
-        res = requests.get(url)
-        res = requests.get(url)
-        print(res.text)
-        exit()
-        return re.findall(r'https.*',res.text)
+    def lesson_download(self,lessons,path):
+        for lesson in lessons:
+            lesson_id = int(lesson['lesson_id'])
+            video_id  = int(lesson['video_id'])
+            filename  = path + "/%d.%s.ts" % (lesson['number'], lesson['title'].replace('/', '&'))
+            cto.check_or_make_dir(path)
 
-    def download_video(self,filename,urls):
-        print('下载中-%s' % (filename))
-        file = open(filename, 'ab')
-        for i in urls:
-            res = requests.get(i)
-            file.write(res.content)
-            file.flush()
-        file.close()
+            if os.path.exists(filename): continue
+            urls = self.get_download_url(headers, lesson_id, video_id)
+
+            if urls : cto.download(filename, urls)
+            else    :  print '未购买,无法下载-%d.%s' % (lesson['number'],lesson['title'])
+            return
+
+    def show_lessons(self,lessons):
+        if lessons['chapter']:
+            for lesson in lessons['chapter']:
+                print lesson['number'],lesson['title']
+        else:
+            for lesson in lessons['lesson']:
+                print lesson['number'],lesson['title']
         return
 
-    def get_course_list(self, headers, course_id):
+    def get_lesson_list(self, headers, course_id):
         infos = {
             'chapter':{},
             'lesson':[]
@@ -107,16 +108,7 @@ headers = {
 }
 
 time1 = time.time()
-obj = cto()
-# courses = [1691,
-# 10417
-# 10069人人都会python数据分析之python3快速入门【最新】
-#10933 python爬虫
-# ]
-course_ids = [9263]#,]10933,
-path = 'f:/videos/course'
-for course_id in course_ids:
-    obj.course(headers,course_id,path)
+obj = Course()
 
-time_total = time.time()-time1
-print('总计花费时间%d秒'%(time_total))
+course_id = 8360
+obj.course(headers,course_id)
