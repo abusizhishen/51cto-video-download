@@ -8,7 +8,6 @@ def check_or_make_dir(path):
             check_or_make_dir(path[0:path.rfind('/')])
         os.mkdir(path)
 
-
 # 拼凑时间
 def total_time(total_time):
     show = ''

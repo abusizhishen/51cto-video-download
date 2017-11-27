@@ -1,5 +1,4 @@
 #crawler
-免费爬取51cto课程视频
 
 1.webjob为微职位课程
 2.topic为专题课程
