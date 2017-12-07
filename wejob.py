@@ -35,7 +35,7 @@ class Wejob(object,):
             course_id = int(course['train_course_id'])
             course_index = courses.index(course)+1
 
-            file_path = self.path + '/'+course['number']+'.'+course['course_name'].replace(':',' ')
+            file_path = os.path.join(self.path, course['number']+'.'+course['course_name'])
             cto.check_or_make_dir(file_path)
 
             print('%d/%d获取课程详情' % (course_index, total_course))
@@ -45,7 +45,7 @@ class Wejob(object,):
             for lesson in lessons:
                 lesson_id = '_'.join([str(course_id), str(lesson['lesson_id'])])
                 lesson_index = lessons.index(lesson)+1
-                filename = file_path+"/%d.%s.ts" % (lesson_index, lesson['lesson_name'])
+                filename = os.path.join(file_path, "%d.%s.ts" % (lesson_index, lesson['lesson_name']))
                 if os.path.exists(filename):
                     continue
 

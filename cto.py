@@ -24,10 +24,13 @@ def total_time(total_time):
     return show or '0秒'
 
 def download(filename,urls):
-    with open(filename, 'ab') as file:
-        for url in urls:
-            res = requests.get(url)
-            file.write(res.content)
+    try:
+        with open(filename, 'ab') as file:
+            for url in urls:
+                res = requests.get(url)
+                file.write(res.content)
+    except IOError as e:
+        print e
     return
 
 class  MulGet (object):
