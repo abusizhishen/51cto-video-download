@@ -1,7 +1,7 @@
 {
 
   //微职位详情查看地址,替换train_id为 微职位id
-  //http////edu.51cto.com/center/wejob/index/view?id=train_id&force=3&orig=try
+  //http://edu.51cto.com/center/wejob/index/view?id=train_id&force=3&orig=try
   "wejob" : [
     77,  // Linux高薪运维培训全程班第3期--老男孩,
     94,  // #Python高级自动化开发工程师微职位,

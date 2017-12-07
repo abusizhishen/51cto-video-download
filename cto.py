@@ -3,9 +3,10 @@ import os,requests, threading, time
 
 # 递归检查并创建文件夹
 def check_or_make_dir(path):
+    sep = os.path.sep
     if not os.path.exists(path):
-        if path.find('/') != -1:
-            check_or_make_dir(path[0:path.rfind('/')])
+        if path.find(sep) != -1:
+            check_or_make_dir(path[0:path.rfind(sep)])
         os.mkdir(path)
 
 # 拼凑时间
