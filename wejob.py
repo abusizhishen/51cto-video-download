@@ -7,11 +7,12 @@ sys.setdefaultencoding('utf-8')
 
 class Wejob(object,):
     action = ('info','download')
-    def __init__(self,headers, train_id, path = '../学习'):
+    def __init__(self,headers, train_id, path = '学习'):
         self.headers = headers
         self.train_id = train_id
-        self.path = path
-
+        self.path = os.path.join(os.path.abspath('..'), path)
+        print self.path
+        exit()
     def train(self):
         train_start = time.time()
         train = self.get_train_info()
