@@ -10,9 +10,9 @@ class Wejob(object,):
     def __init__(self,headers, train_id, path = '学习'):
         self.headers = headers
         self.train_id = train_id
-        self.path = os.path.join(os.path.abspath('..'), path)
-        print self.path
-        exit()
+        current_path = os.path.abspath(__file__)
+        self.path = os.path.abspath(os.path.join(current_path,'../../',path))
+
     def train(self):
         train_start = time.time()
         train = self.get_train_info()
