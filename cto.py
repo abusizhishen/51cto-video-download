@@ -1,5 +1,6 @@
 #encoding=utf-8
-import os,requests, threading, time
+import os, requests, time
+from bs4 import BeautifulSoup
 
 # 递归检查并创建文件夹
 def check_or_make_dir(path):
@@ -34,67 +35,52 @@ def download(filename,urls):
         print e
     return
 
-class  MulGet (object):
-    result = {}
-    def __init__(self,urls):
-        self.urls = urls
-        self.urls_bak = urls
+def login():
+    url = 'http://home.51cto.com/index'
+    headers = {
+        'Host': 'edu.51cto.com',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:56.0) Gecko/20100101 Firefox/56.0',
+    }
 
-    def do(self):
-        while self.urls:
-            url = self.urls.pop()
-            self.result[time.time()] = requests.get('http://www.hao123.com')
-            print '当前线程名%s' % (threading.currentThread().name)
-            time.sleep(2)
-    def moive(self):
-        for i in range(5):
-            print '我在看电影,当前线程名%s' % (threading.currentThread().name)
-            time.sleep(3)
+    headers = {
+        "Accept": "text / html, application / xhtml + xml, application / xml;q = 0.9, image / webp, image / apng, * / *;q = 0.8",
+        "Accept - Encoding":"gzip, deflate",
+        "Accept - Language":"zh - CN, zh;q = 0.9, en;q = 0.8",
+        "Connection":"keep - alive",
+        "DNT":"1",
+        "Host":"home.51cto.com",
+        "Upgrade - Insecure - Requests":"1",
+        "User - Agent":"Mozilla / 5.0 (Macintosh;Intel Mac OS X 10_13_2) AppleWebKit / 537.36 (KHTML, likeGecko) Chrome/63.0.3239.84 Safari / 537.36"
+    }
 
-    def music(self):
-        for i in range(5):
-            print '我在听音乐,当前线程名%s' % (threading.currentThread().name)
-            time.sleep(3)
+    response = requests.get(url, headers=headers)
 
-    def eat(self):
-        for i in range(5):
-            print '我在吃饭,当前线程名%s' % (threading.currentThread().name)
-            time.sleep(3)
+    cookies = response.cookies.get_dict()
+    soup = BeautifulSoup(response.text, 'html.parser')
+    input_hidden = soup.select('input[name="_csrf"]')
+    form_csrf = input_hidden[0].get('value')
 
-    def tea(self):
-        for i in range(5):
-            print '我在喝茶,当前线程名%s' % (threading.currentThread().name)
-            time.sleep(3)
+    username = raw_input('用户名或者邮箱')
+    password = raw_input('密码')
 
-    def mkThread(self):
-        t1 = threading.Thread(target=self.moive())
-        t2 = threading.Thread(target=self.tea())
-        t3= threading.Thread(target=self.music)
-        t4 = threading.Thread(target=self.eat())
+    data = {
+        "_csrf": form_csrf,
+        "LoginForm[username]":username,
+        "LoginForm[password]":password,
+        "LoginForm[rememberMe]":0,
+        "LoginForm[rememberMe]":1,
+        "login - button":"登录"
+    }
 
-        threads = []
 
-        threads.append(t1)
-        threads.append(t2)
-        threads.append(t3)
-        threads.append(t4)
+    #print form_token
+    # while(True):
 
-        for t in threads:
-            t.setDaemon(True)
-            t.start()
-        t.join()
 
-    def back(self):
-        content = ''
-        print self.result
-        for i in self.result:
-            content += i
+login()
 
-        return content
 
-if __name__ == '__main__':
-    urls = range(10)
-    obj = MulGet(urls)
-    obj.mkThread()
-    re = obj.back()
-    print re
+
+
+
+

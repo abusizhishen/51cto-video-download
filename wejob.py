@@ -39,7 +39,7 @@ class Wejob(object,):
             file_path = os.path.join(self.path, course['number']+'.'+course['course_name'])
             cto.check_or_make_dir(file_path)
 
-            print('%d/%d获取课程详情' % (course_index, total_course))
+            print('%d/%d获取%s详情' % (course_index, total_course,course['course_name']))
             lessons = self.get_course_info(course_id)
             total_lesson = len(lessons)
 
