@@ -9,5 +9,5 @@ pip install -r requirements.txt
 
 ##用法
 python run.py train_id  #替换train_id为需要的微职位id
-如 python run.py 153
+如 python run.py 139
 微职位可在video.json中查看
