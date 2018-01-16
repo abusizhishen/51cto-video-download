@@ -26,6 +26,7 @@ class Wejob(object,):
         courses = train['courses']
 
         total_course = len(courses)
+        courses = courses[7:]
         print('总计%d门course' % (total_course))
         #打印course名称
         for course in courses:
@@ -88,7 +89,7 @@ class Wejob(object,):
 
             for m in pages:
                 info = {
-                    'lesson_name': m['lesson_name'],
+                    'lesson_name': cto.filename_reg_check(m['lesson_name']),
                     'lesson_id'  : m['lesson_id'],
                     'video_id'   : m['video_id']
                 }
@@ -108,7 +109,7 @@ class Wejob(object,):
 
             for i in res['data']:
                 course = {
-                    'course_name':i['course_name'].encode('utf-8'),
+                    'course_name':cto.filename_reg_check(i['course_name'].encode('utf-8')),
                     'train_id':i['train_id'],
                     'train_course_id':i['train_course_id'],
                     'lesson_num':i['lesson_num'],
@@ -124,7 +125,7 @@ class Wejob(object,):
         title = soup.find('h2', id='CourseTitle')
         if title == None:
             exit('找不到该课程')
-        return title.string
+        return cto.filename_reg_check(title.string)
 
     def show_train_course_list(self):
         train = self.get_train_info()

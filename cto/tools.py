@@ -1,5 +1,5 @@
 #encoding=utf-8
-import sys, json, pickle, requests
+import sys, json, pickle, requests, re
 from lxml import etree
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -37,4 +37,7 @@ def download(filename,urls):
     except IOError as e:
         print(e)
     return
+
+def filename_reg_check(filename):
+    return  re.sub('[\?\*\/\\\!]', '', filename)
 
