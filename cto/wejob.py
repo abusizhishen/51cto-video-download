@@ -35,12 +35,18 @@ class Wejob(object,):
         if action == 'n':
             print '终止下载,程序退出'
             exit()
+
         for course in courses:
             course_id = int(course['train_course_id'])
             course_index = courses.index(course)+1
 
             file_path = os.path.join(self.path, course['number']+'.'+course['course_name'])
             cto.check_or_make_dir(file_path)
+
+            train_introduce = 'http://edu.51cto.com/center/wejob/index/view?id=%d&force=3&orig=try' % (self.train_id)
+            train_page = session.get(train_introduce)
+            with open(file_path+'/index.html', 'ab') as f:
+                f.write(train_page.content)
 
             print('%d/%d获取%s详情' % (course_index, total_course,course['course_name']))
             lessons = self.get_course_info(course_id)
