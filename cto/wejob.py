@@ -21,12 +21,12 @@ class Wejob(object,):
         train = self.get_train_info()
         train_name = train['name']
         self.path+='/'+train_name
+        cto.check_or_make_dir(self.path)
 
         print('微职位名称:'+train_name+'\n获取课程列表')
         courses = train['courses']
 
         total_course = len(courses)
-        courses = courses[7:]
         print('总计%d门course' % (total_course))
         #打印course名称
         for course in courses:
@@ -36,6 +36,11 @@ class Wejob(object,):
         if action == 'n':
             print '终止下载,程序退出'
             exit()
+        #保留train index page
+        url = 'http://edu.51cto.com/center/wejob/index/view?id=%d&force=3&orig=try' % (self.train_id)
+        resp = session.get(url)
+        with open(self.path+'/index.html', 'ab') as f:
+            f.write(resp.content)
 
         for course in courses:
             course_id = int(course['train_course_id'])
