@@ -17,9 +17,12 @@ class Login(object):
     }
 
     # 缓存信息路径
+    from cto.tools import get_current_dirpath
+    dirpath = get_current_dirpath(__file__)
+
     path = {
-        'auth': 'cache/auth',
-        'cookies': 'cache/cookies'
+        'auth': dirpath+'/cache/auth',
+        'cookies': dirpath+'/cache/cookies'
     }
 
     def __init__(self):

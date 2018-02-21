@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
 from cto.wejob import Wejob
-from cto import login
 
 def go():
     args = sys.argv

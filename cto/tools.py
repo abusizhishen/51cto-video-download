@@ -13,7 +13,7 @@ def check_or_make_dir(path):
             check_or_make_dir(path[0:path.rfind(sep)])
         os.mkdir(path)
 
-# 拼凑时间
+# 拼凑时间 total_time单位为秒
 def total_time(total_time):
     show = ''
     sort = ('小时', '分钟', '秒')
@@ -28,6 +28,7 @@ def total_time(total_time):
             show += str(time_dict[i]) + i
     return show or '0秒'
 
+#下载并保存文件
 def download(filename,urls):
     try:
         with open(filename, 'ab') as file:
@@ -40,4 +41,14 @@ def download(filename,urls):
 
 def filename_reg_check(filename):
     return  re.sub('[\?\*\/\\\!]', '', filename)
+
+#获取“当前”文件所在目录
+def get_current_path(current_file):
+    current_path = os.path.split(os.path.realpath(current_file))[0]
+    return current_path
+
+#获取当前文件所在目录的父目录
+def get_current_dirpath(current_path):
+    dirpath = os.path.dirname(get_current_path(current_path))
+    return dirpath
 

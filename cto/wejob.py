@@ -5,13 +5,11 @@ from cto import Login
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-login = Login()
-session = login.login()
-
 class Wejob(object,):
     action = ('info','download')
     def __init__(self, train_id, path = '学习'):
-        self.session = session
+        login = Login()
+        self.session = login.login()
         self.train_id = train_id
         current_path = os.path.abspath(__file__)
         self.path = os.path.abspath(os.path.join(current_path,'../../../',path))
@@ -38,7 +36,7 @@ class Wejob(object,):
             exit()
         #保留train index page
         url = 'http://edu.51cto.com/center/wejob/index/view?id=%d&force=3&orig=try' % (self.train_id)
-        resp = session.get(url)
+        resp =self.session.get(url)
         with open(self.path+'/index.html', 'ab') as f:
             f.write(resp.content)
 
@@ -50,7 +48,7 @@ class Wejob(object,):
             cto.check_or_make_dir(file_path)
 
             train_introduce = 'http://edu.51cto.com/center/wejob/index/view?id=%d&force=3&orig=try' % (self.train_id)
-            train_page = session.get(train_introduce)
+            train_page =self.session.get(train_introduce)
             with open(file_path+'/index.html', 'ab') as f:
                 f.write(train_page.content)
 
@@ -134,6 +132,6 @@ class Wejob(object,):
 
     def show_train_course_list(self):
         train = self.get_train_info()
-        for i in train['course']:
+        for i in train['courses']:
             print('微职位_id: %d; 课程名称: %s ; 总课程数: %d' % (i['train_id'],i['course_name'], i['lesson_num']))
         return
