@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from bs4 import BeautifulSoup
 import json, re, cto
-from module import Train, Train_course, Course_lesson
+from models import Train, Train_course, Course_lesson
 from cto import Login
 login = Login()
 session = login.login()
@@ -157,14 +157,7 @@ def is_exists_train(train_id):
     else:print('%s无效' % train_id)
 
 def run():
-    # Wejob.get_trains()
-    engine = create_engine(sql_uri)
-    con = sessionmaker(bind=engine)
-    con = con()
-    trains = con.query(Train).filter_by(status=0).with_entities('train_id').all()
-    print(trains)
-    for i in trains:
-        q.put(i.train_id)
+    Wejob.get_trains()
 
     for i in range(4):
         obj = Wejob()

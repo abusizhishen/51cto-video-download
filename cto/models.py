@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import sqlalchemy
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, VARCHAR, ForeignKey
 from sqlalchemy.orm import sessionmaker
 
 engine = create_engine('mysql://root:root@localhost/51cto?charset=utf8mb4')
 Base = declarative_base()
+metadata = MetaData(engine)
 
 class Train(Base):
     __tablename__ = 'train'
@@ -36,3 +37,15 @@ class Course_lesson(Base):
     video_id  = Column(Integer, nullable=False)
     video_url = Column(VARCHAR(100), nullable=False)
     video_num = Column(Integer, nullable=False)
+
+#创建表 create table
+metadata.create_all()
+
+# #创建session
+# session = sessionmaker(bind=engine)
+# session = session()
+#
+# #增
+# tra = Train(train_id=train_id, train_name = train['name'], course_num = train['course_num'])
+# session.add(tra)
+# session.commit()
