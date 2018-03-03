@@ -40,8 +40,9 @@ class Wejob(object,):
         with open(self.path+'/index.html', 'ab') as f:
             f.write(resp.content)
         #将课程信息保存到json中去
-        with open(self.path +'/data.json','a') as f:
-            json.dump(courses, f)
+        with open(self.path +'/info.json','w') as f:
+            data = json.dumps(courses, ensure_ascii=False, indent=2)
+            f.write(data)
 
         for course in courses:
             course_id = int(course['train_course_id'])

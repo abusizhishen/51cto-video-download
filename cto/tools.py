@@ -40,7 +40,7 @@ def download(filename,urls):
     return
 
 def filename_reg_check(filename):
-    return  re.sub('[\?\*\/\\\!]', '', filename)
+    return  re.sub('[\?\*\/\\\!]', '&', filename)
 
 #获取“当前”文件所在目录
 def get_current_path(current_file):
