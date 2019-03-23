@@ -10,8 +10,7 @@ def go():
     else:
         train_id = args[1]
     try:
-        obj = Wejob(int(train_id))
-        obj.train()
+        Wejob(int(train_id)).train()
     except KeyboardInterrupt:
         print('程序退出')
         exit()
