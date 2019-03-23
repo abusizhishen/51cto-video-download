@@ -1,5 +1,5 @@
 #crawler
-webjob为微职位课程
+webjob为微职位课程,仅支持下载购买的课程。
 
 ##环境
 python2.7 、pip
