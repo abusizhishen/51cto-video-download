@@ -5,8 +5,10 @@ from cto import Login
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+
 class Wejob(object,):
-    action = ('info','download')
+    action = ('info', 'download')
+
     def __init__(self, train_id, path = '学习'):
         login = Login()
         self.session = login.login()
@@ -83,13 +85,13 @@ class Wejob(object,):
         res = self.session.get(url).text
         return re.findall(r'https.*',res)
 
-    def get_course_info(self,course_id):
+    def get_course_info(self, course_id):
         infos = []
         current_page = 1
         while(current_page):
-            url  = 'http://edu.51cto.com/center/wejob/usr/course-infoajax?train_id=%d&train_course_id=%d&page=%d&size=20'\
-                  %(self.train_id, course_id,current_page)
-            res  = self.session.get(url).text
+            url = 'http://edu.51cto.com/center/wejob/usr/course-infoajax?train_id=%d&train_course_id=%d&page=%d&size=20'\
+                  % (self.train_id, course_id,current_page)
+            res = self.session.get(url).text
             data = json.loads(res)['data']
             current_page = data['current_page'] + 1 if data['current_page'] < data['count_page'] else 0
             pages = data['data']
@@ -97,8 +99,8 @@ class Wejob(object,):
             for m in pages:
                 info = {
                     'lesson_name': cto.filename_reg_check(m['lesson_name']),
-                    'lesson_id'  : m['lesson_id'],
-                    'video_id'   : m['video_id']
+                    'lesson_id': m['lesson_id'],
+                    'video_id': m['video_id']
                 }
                 infos.append(info)
         return infos
