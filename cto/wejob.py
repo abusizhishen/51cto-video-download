@@ -113,7 +113,14 @@ class Wejob(object,):
             url = 'http://edu.51cto.com/center/wejob/usr/courseajax?train_id=%d&page=%d&size=1000'%\
                   (self.train_id,current_page)
             res = self.session.get(url)
-            res = json.loads(res.text)['data']
+
+            try :res = json.loads(res.text)
+            except ValueError as e:
+
+                print "接口响应异常", "%s" % e
+                exit()
+
+            res = res['data']
             current_page = res['current_page']+1 if  res['current_page'] < res['count_page'] else 0
 
             for i in res['data']:

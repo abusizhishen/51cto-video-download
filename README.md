@@ -1,5 +1,6 @@
 #crawler
 webjob为微职位课程,仅支持下载购买的课程。
+但随着51cto接口的变化可能无法使用
 
 ##环境
 python2.7 、pip
