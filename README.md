@@ -17,3 +17,5 @@ pip install -r requirements.txt
 
 注：程序不会上传用户账号，仅会将账号保存在本地cache文件夹中的auth中，
 cookie信息保存在cache文件夹中的cookies中，避免每次下载都需要输入密码。
+
+如有需求可联系作者，我将持续改进程序，如果能够帮助到你。
