@@ -39,16 +39,16 @@ def download(filename,urls):
         print(e)
     return
 
+
 def filename_reg_check(filename):
-    return  re.sub('[\?\*\/\\\!]', '&', filename)
+    return re.sub('[\?\*\/\\\!]', '&', filename)
 
-#获取“当前”文件所在目录
+
+# 获取“当前”文件所在目录
 def get_current_path(current_file):
-    current_path = os.path.split(os.path.realpath(current_file))[0]
-    return current_path
+    return os.path.split(os.path.realpath(current_file))[0]
 
-#获取当前文件所在目录的父目录
+
+# 获取当前文件所在目录的父目录
 def get_current_dirpath(current_path):
-    dirpath = os.path.dirname(get_current_path(current_path))
-    return dirpath
-
+    return os.path.dirname(get_current_path(current_path))

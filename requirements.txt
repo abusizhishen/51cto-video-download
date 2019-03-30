@@ -1,3 +1,6 @@
 lxml
 bs4
 requests
+sqlalchemy
+simplejson
+pyexecjs
