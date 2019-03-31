@@ -2,8 +2,9 @@
 import pickle,requests,os
 from cto.urls import urls
 from lxml import etree
+from cto import tools
 
-#自动登录类
+# 自动登录类
 class Login(object):
     headers = {
         "Accept": "text / html, application / xhtml + xml, application / xml;q = 0.9, image / webp, image / apng, * / *;q = 0.8",
@@ -16,16 +17,14 @@ class Login(object):
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:56.0) Gecko/20100101 Firefox/56.0',
     }
 
-    # 缓存信息路径
-    from cto.tools import get_current_dirpath
-    dirpath = get_current_dirpath(__file__)
-
-    path = {
-        'auth': dirpath+'/cache/auth',
-        'cookies': dirpath+'/cache/cookies'
-    }
-
+    # 初始化缓存信息路径
     def __init__(self):
+        self.cache_path = tools.join_path(tools.main_path(), 'cache')
+        tools.check_or_make_dir(self.cache_path)
+        self.path = {
+            'auth': tools.join_path(self.cache_path, "auth"),
+            'cookies': tools.join_path(self.cache_path, "cookies"),
+        }
         pass
 
     def login(self):
@@ -45,8 +44,7 @@ class Login(object):
                 print('重新登陆成功')
                 return result
 
-    def re_login(self,session):
-        headers = self.headers
+    def re_login(self, session):
         print("请重新登录")
         username = raw_input('登录账号:')
         password = raw_input('密码:')

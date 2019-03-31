@@ -4,10 +4,9 @@ from cto.wejob import Wejob
 from cto import Login
 
 
-if __name__ == '__main__':
+def run(ss):
     try:
-        session = Login().login()
-        w = Wejob(session)
+        w = Wejob(ss)
         train_id = w.get_train_id_by_list()
         w.train(train_id)
 
@@ -15,3 +14,7 @@ if __name__ == '__main__':
         print
         print('程序退出')
         exit(0)
+
+
+if __name__ == '__main__':
+    run()

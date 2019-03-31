@@ -1,5 +1,5 @@
 # encoding=utf-8
-import simplejson as json, execjs,re
+import simplejson as json, execjs, re, os
 from cto import Login,tools
 
 
@@ -7,13 +7,17 @@ class Lesson(object):
     lesson_id = 0
     size = 20
     page = 1
+    course_id = 0
+    course_name = ""
 
-    def __init__(self, session, course_id):
+    def __init__(self, session, path="学习"):
         self.session = session
-        self.course_id = course_id
+        self.course_id = 0
         self.lesson_id = 0
         self.list = []
         self.data = []  # [['filename':'',urls:[]]]
+        self.path = tools.join_path(tools.main_path(), path)
+
         pass
 
     def lesson_list(self):
@@ -106,14 +110,7 @@ class Lesson(object):
         return self
 
     def sign(self):
-        f = open("./js/h5player.js")
-        line = f.readline()
-        htmlstr = ''
-        while line:
-            htmlstr = htmlstr + line
-            line = f.readline()
-
-        ctx = execjs.compile(htmlstr)
+        ctx = execjs.compile(tools.get_sign_js())
         return ctx.call("sign", self.lesson_id)
 
     def get_lesson_m3u8(self, lesson_id):
@@ -130,18 +127,69 @@ class Lesson(object):
         # 10s video urls
         return self.get_video_url_by_m3u8_file(url)
 
-    def show_all_m3u8(self):
-        print len(self.list)
+    def download(self):
+        course_path = tools.join_path(self.path, self.course_name)
+        print course_path
+        tools.check_or_make_dir(course_path)
+
         for lesson in self.list:
             urls = self.get_lesson_m3u8(lesson['lesson_id'])
-
-            print "download %s" % lesson['title']
-            tools.download("video/"+lesson['title']+".ts", urls)
+            file_name = tools.join_path(course_path, "%s.ts" % lesson['title'])
+            print file_name
+            if os.path.exists(file_name):
+                continue
+            print "download %s" % file_name
+            tools.download(file_name, urls)
 
     def get_video_url_by_m3u8_file(self, url):
         res = self.session.get(url).text
         return re.findall(r'https.*', res)
 
-    def down(self):
-        self.lesson_list().show_all_m3u8()
+    def set_course_id_by_course_list(self):
+        url = "https://edu.51cto.com/center/course/user/ajax-info-new?page=%d&size=5&cate_id=0"
+        currentPage = 1
+        flag = 1
+        print "以下是您购买的课程："
 
+        while True:
+            text = self.session.get(url % currentPage).text
+            data = json.loads(text)['data']
+            courses = data['course']
+            currentPage = data['currentPage']
+            totalPage = data['totalPage']
+            course_desc = {}
+
+            for course in courses:
+                course_desc[course['id']] = course['title']
+                print "课程ID:%d, 课程名称:%s" % (course['id'], course['title'])
+
+            while True:
+                print
+                print "请输入您要下载的课程id,输入p向上翻页,输入n继续向下翻页,默认向下翻页"
+                input = raw_input("课程id：")
+
+                if input == "n" or input == "" or input == "p":
+                    if input == "p":
+                        flag = -1
+                    elif input == "n":
+                        flag = 1
+                        if currentPage == totalPage:
+                            break
+                    currentPage += flag
+                    break
+
+                try:
+                    input = int(input)
+                except ValueError:
+                    print "无效的输入:", input
+                else:
+
+                    if input in course_desc:
+                        self.course_id = input
+                        self.course_name = course_desc[input]
+                        return self
+                    else:
+                        if input == 0:
+                            exit()
+                        print "无效的课程id:", input
+                        break

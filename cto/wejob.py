@@ -1,7 +1,7 @@
 # coding=utf-8
 from bs4 import BeautifulSoup
 import json,re,os,time,random,datetime,sys,cto
-from cto import Login
+from cto import Login,tools
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -12,8 +12,7 @@ class Wejob(object,):
     def __init__(self, session, path='学习'):
         self.session = session
         self.train_id = 0
-        current_path = os.path.abspath(__file__)
-        self.path = os.path.abspath(os.path.join(current_path,'../../../',path))
+        self.path = tools.join_path(tools.main_path(), path)
 
     def train(self, train_id):
         self.train_id = train_id
@@ -27,7 +26,8 @@ class Wejob(object,):
         courses = train['courses']
 
         total_course = len(courses)
-        print('总计%d门course' % (total_course))
+        print('总计%d门course' % total_course)
+
         # 打印course名称
         for course in courses:
             print(str(courses.index(course)+1)+'.'+course['course_name'])
@@ -168,7 +168,9 @@ class Wejob(object,):
         print "以下是您购买的微职位"
         print
 
+        train_desc = []
         for i in data:
+            train_desc.append(int(i['train_id']))
             print i['train_id'], i['name']
             print
             print "课程id: %d, 课程名称: %s" % (int(i['train_id']), i['name'])
@@ -177,10 +179,14 @@ class Wejob(object,):
 
         while True:
             try:
-                id = raw_input("请输入您要下载的微职位id:")
-                id = int(id)
+                input = raw_input("请输入您要下载的微职位id:")
+                input = int(input)
             except ValueError:
-                print "无效的输入:" ,id
+                print "无效的输入:" ,input
             else:
-                break
-        return id
+                if input in train_desc:
+                    return input
+                else:
+                    if input == 0:
+                        exit(0)
+                    print "课程id无效:", input

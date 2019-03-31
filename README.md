@@ -11,7 +11,7 @@ python2.7 、pip
 pip install -r requirements.txt
 
 ##用法
-```python WeiJob.py```
+```python run.py```
 
 按提示输入您要下载的微职位id进行下载
 
