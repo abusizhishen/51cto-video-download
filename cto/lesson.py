@@ -109,17 +109,30 @@ class Lesson(object):
         self.list = infos
         return self
 
-    def sign(self):
+    def sign(self, lesson_id):
         ctx = execjs.compile(tools.get_sign_js())
-        return ctx.call("sign", self.lesson_id)
+        return ctx.call("sign", lesson_id)
 
     def get_lesson_m3u8(self, lesson_id):
+        sign = self.sign(lesson_id)
         url = "https://edu.51cto.com/center/player/play/get-lesson-info?" \
-              "type=course&lesson_type=course&sign=%s&lesson_id=%d" % (self.sign(), lesson_id)
+              "type=course&lesson_type=course&sign=%s&lesson_id=%d" % (sign, lesson_id)
 
         resp = self.session.get(url).text
 
-        arr = json.loads(resp)
+        try:
+            arr = json.loads(resp)
+        except Exception, e:
+            print (e.message)
+            print("下载报错")
+            raise Exception("""
+            获取m3u8文件报错，
+            链接地址：%s
+            接口返回:%s
+            sign: %s
+            exception message: %s
+            """ % (url, resp, sign, e.message))
+
         dispatch = arr['dispatch']
         high = dispatch[0]
         url = high['url']
