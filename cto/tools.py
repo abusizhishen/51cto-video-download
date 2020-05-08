@@ -119,3 +119,4 @@ var sign = function (lid) {
     return MD5(lid + oriralSign).toString();
 };
 """
+
