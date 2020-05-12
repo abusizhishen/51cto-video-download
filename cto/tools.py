@@ -32,12 +32,15 @@ def total_time(total_time):
 
 
 # 下载并保存文件
-def download(filename, urls):
+def download(filename, urls, func_decode=None):
     try:
         with open(filename, 'ab') as file:
             for url in urls:
                 res = requests.get(url)
-                file.write(res.content)
+                data = res.content
+                if func_decode is not None:
+                    data = func_decode(data)
+                file.write(data)
     except IOError as e:
         print(e)
     return

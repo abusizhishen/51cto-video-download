@@ -3,9 +3,13 @@ import execjs
 from js import decory_video_js
 
 
-class video:
-    def decory(self,play_key,lesson_id,data):
-        key = self.decory_video_key(play_key,lesson_id)
+class Video:
+    def __init__(self):
+        pass
+
+    def decory(self, play_key, lesson_id, data):
+        lesson_id = str(lesson_id)
+        key = self.decory_video_key(play_key, lesson_id)
         bs = AES.block_size
         if len(data) <= bs:
             return (data)
@@ -15,6 +19,6 @@ class video:
         data = unpad(cipher.decrypt(data[bs:]))
         return (data)
 
-    def decory_video_key(self,key,lesson_id ):
+    def decory_video_key(self, key, lesson_id):
         ctx = execjs.compile(decory_video_js.decorypt_js())
         return ctx.call("decode", key, lesson_id)

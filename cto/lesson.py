@@ -1,15 +1,9 @@
 # encoding=utf-8
 import simplejson as json, execjs, re, os
-from cto import Login,tools
+from cto import tools, decory_video
 
 
 class Lesson(object):
-    lesson_id = 0
-    size = 20
-    page = 1
-    course_id = 0
-    course_name = ""
-
     def __init__(self, session, path="学习"):
         self.session = session
         self.course_id = 0
@@ -17,6 +11,11 @@ class Lesson(object):
         self.list = []
         self.data = []  # [['filename':'',urls:[]]]
         self.path = tools.join_path(tools.main_path(), path)
+        self.sign = None
+        self.size = 20
+        self.page = 1
+        self.course_name = ""
+        self.id = None
 
         pass
 
@@ -109,14 +108,14 @@ class Lesson(object):
         self.list = infos
         return self
 
-    def sign(self, lesson_id):
+    def get_sign(self, lesson_id):
         ctx = execjs.compile(tools.get_sign_js())
-        return ctx.call("sign", lesson_id)
+        return ctx.call("sign", str(lesson_id))
 
     def get_lesson_m3u8(self, lesson_id):
-        sign = self.sign(lesson_id)
+        self.sign = self.get_sign(lesson_id)
         url = "https://edu.51cto.com/center/player/play/get-lesson-info?" \
-              "type=course&lesson_type=course&sign=%s&lesson_id=%d" % (sign, lesson_id)
+              "type=course&lesson_type=course&sign=%s&lesson_id=%d" % (self.sign, lesson_id)
 
         resp = self.session.get(url).text
 
@@ -131,12 +130,18 @@ class Lesson(object):
             接口返回:%s
             sign: %s
             exception message: %s
-            """ % (url, resp, sign, e.message))
+            """ % (url, resp, self.sign, e.message))
 
         dispatch = arr['dispatch']
         high = dispatch[0]
         url = high['url']
-
+        params = url.split("?")[1].split("&")
+        args = {}
+        for param in params:
+            strs = param.split("=")
+            print strs
+            args[strs[0]] = strs[1]
+        self.id = int(args["id"])
         # 10s video urls
         return self.get_video_url_by_m3u8_file(url)
 
@@ -146,13 +151,21 @@ class Lesson(object):
         tools.check_or_make_dir(course_path)
 
         for lesson in self.list:
-            urls = self.get_lesson_m3u8(lesson['lesson_id'])
+            lesson_id = lesson['lesson_id']
+
+            urls = self.get_lesson_m3u8(lesson_id)
             file_name = tools.join_path(course_path, "%s.ts" % lesson['title'])
             print file_name
             if os.path.exists(file_name):
                 continue
             print "download %s" % file_name
-            tools.download(file_name, urls)
+            play_key = self.get_key(self.id, lesson_id)
+            print "视频解密key: %s" % play_key
+
+            def func_decode(video_data):
+                return decory_video.Video().decory(play_key, str(lesson_id), video_data)
+
+            tools.download(file_name, urls, func_decode)
 
     def get_video_url_by_m3u8_file(self, url):
         res = self.session.get(url).text
@@ -206,3 +219,19 @@ class Lesson(object):
                             exit()
                         print "无效的课程id:", input
                         break
+
+    # 这里的id是获取m3u8链接中的id
+    # https://edu.51cto.com//center/player/play/m3u8?lesson_id=318336&id=312277&dp=high&type=course&lesson_type=course&cid=3
+    def get_key(self, id, lesson_id):
+        # url = "https://edu.51cto.com/center/player/play/get-key?lesson_id=318333&id=312291&type=course&lesson_type
+        # =course&isPreview=0&sign=ecb00b0f73f40a6b63dc899ea3c5707f"
+        url_model = "https://edu.51cto.com/center/player/play/get-key?lesson_id=%d&id=%d&type=course&lesson_type" \
+                    "=course&isPreview=0&sign=%s"
+        self.get_sign(lesson_id)
+        url = url_model % (lesson_id, id, self.sign)
+        # print ("get_key: ", url)
+        key = self.session.get(url).text
+        if key == "errorSign":
+            raise Exception("err:%s, url: %s" % (key, url))
+
+        return key

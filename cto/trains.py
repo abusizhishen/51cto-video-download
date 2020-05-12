@@ -19,6 +19,10 @@ class Wejob(object,):
     engine = create_engine(sql_uri)
     con = sessionmaker(bind=engine)
 
+    def __init__(self):
+        self.sign = None
+
+
     def train(self):
         con = self.con()
         train_id = q.get()
