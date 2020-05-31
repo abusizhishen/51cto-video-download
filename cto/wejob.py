@@ -8,8 +8,7 @@ import re
 import sys
 import time
 
-from bs4 import BeautifulSoup
-
+from lxml import html
 from cto import tools, lesson as le, decory_video
 
 reload(sys)
@@ -82,10 +81,11 @@ class Wejob(object, ):
                 print datetime.datetime.now().strftime("%H:%M:%S") + ' 正在下载(%d/%d)-%s' % (
                     lesson_index, total_lesson, lesson['lesson_name'])
                 urls = self.get_download_url(lesson_id, lesson['video_id'])
+                print "lession_id", course_id
                 play_key = le.Lesson(self.session).get_key(course_id, lesson_id)
 
                 def func_decode(video_data):
-                    return decory_video.Video().decory(play_key, lesson_id, video_data)
+                    return decory_video.Video().decory(play_key, lesson['lesson_id'], video_data)
 
                 try:
                     cto.download(filename, urls, func_decode=func_decode)
@@ -160,12 +160,14 @@ class Wejob(object, ):
 
     def get_train_name(self):
         url = 'http://edu.51cto.com/center/wejob/index/view?id=%d&force=3&orig=try' % (self.train_id)
-        res = self.session.get(url).text
-        soup = BeautifulSoup(res, 'html.parser')
-        title = soup.find('h2', id='CourseTitle')
+        res = self.session.get(url)
+        tree = html.fromstring(res.text)
+        title = tree.xpath("//div[@class='basismes']/div")[0].get("title")
+        print title
+
         if title == None:
             exit('找不到该课程')
-        return cto.filename_reg_check(title.string)
+        return cto.filename_reg_check(title)
 
     def show_train_course_list(self):
         train = self.get_train_info()
