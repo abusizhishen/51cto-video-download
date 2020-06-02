@@ -80,8 +80,12 @@ class Wejob(object, ):
 
                 print datetime.datetime.now().strftime("%H:%M:%S") + ' 正在下载(%d/%d)-%s' % (
                     lesson_index, total_lesson, lesson['lesson_name'])
-                urls, get_key_url = self.get_download_url(lesson_id, lesson['video_id'])
-                print "lession_id", course_id," get key url:", get_key_url
+                try:
+                    urls, get_key_url = self.get_download_url(lesson_id, lesson['video_id'])
+                except Exception as e:
+                    print ("解析m3u8地址保存，可能视频不存在")
+                    continue
+                #print "lession_id", course_id," get key url:", get_key_url
                 play_key = le.Lesson(self.session).get_key_for_wejob(lesson_id, course_id,get_key_url)
 
                 def func_decode(video_data):
@@ -101,12 +105,6 @@ class Wejob(object, ):
               'lesson_type=course' \
               % (lesson_id, video_id)
         res = self.session.get(url).text
-        get_key_url = None
-        for s in res.split(","):
-            arr = s.split("=")
-            if arr[0] == "URI":
-                get_key_url = arr[1]
-                break
         return re.findall(r'https.*', res),  "http://edu.51cto.com/"+res.split("#")[6].split(",")[1].split('"')[1]
 
     def get_course_info(self, course_id):

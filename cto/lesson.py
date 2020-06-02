@@ -247,7 +247,7 @@ class Lesson(object):
         sign = self.get_sign(lesson_id)
         #url = url_model % (str(lesson_id), course_id, sign)
         url += "&sign=%s" % sign
-        print url
+        #print url
         print "sign:", sign
         # print ("get_key: ", url)
         key = self.session.get(url).text
