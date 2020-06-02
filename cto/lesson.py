@@ -227,8 +227,10 @@ class Lesson(object):
         # =course&isPreview=0&sign=ecb00b0f73f40a6b63dc899ea3c5707f"
         url_model = "https://edu.51cto.com/center/player/play/get-key?lesson_id=%s&id=%d&type=course&lesson_type" \
                     "=course&isPreview=0&sign=%s"
+
         sign = self.get_sign(lesson_id)
         url = url_model % (str(lesson_id), id, sign)
+        print url
         print "sign:", sign
         # print ("get_key: ", url)
         key = self.session.get(url).text
@@ -236,3 +238,21 @@ class Lesson(object):
             raise Exception("err:%s, url: %s" % (key, url))
 
         return key
+
+    def get_key_for_wejob(self, lesson_id, course_id,url=None):
+        # url = "https://edu.51cto.com/center/player/play/get-key?lesson_id=318333&id=312291&type=course&lesson_type
+        # =course&isPreview=0&sign=ecb00b0f73f40a6b63dc899ea3c5707f"
+        url_model = "https://edu.51cto.com/center/player/play/get-key?lesson_id=%s&id=%d&type=wejoboutcourse&lesson_type=course&isPreview=0&sign=%s"
+
+        sign = self.get_sign(lesson_id)
+        #url = url_model % (str(lesson_id), course_id, sign)
+        url += "&sign=%s" % sign
+        print url
+        print "sign:", sign
+        # print ("get_key: ", url)
+        key = self.session.get(url).text
+        if key == "errorSign":
+            raise Exception("err:%s, url: %s" % (key, url))
+
+        return key
+

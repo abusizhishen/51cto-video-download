@@ -80,12 +80,13 @@ class Wejob(object, ):
 
                 print datetime.datetime.now().strftime("%H:%M:%S") + ' 正在下载(%d/%d)-%s' % (
                     lesson_index, total_lesson, lesson['lesson_name'])
-                urls = self.get_download_url(lesson_id, lesson['video_id'])
-                print "lession_id", course_id
-                play_key = le.Lesson(self.session).get_key(course_id, lesson_id)
+                urls, get_key_url = self.get_download_url(lesson_id, lesson['video_id'])
+                print "lession_id", course_id," get key url:", get_key_url
+                play_key = le.Lesson(self.session).get_key_for_wejob(lesson_id, course_id,get_key_url)
 
                 def func_decode(video_data):
-                    return decory_video.Video().decory(play_key, lesson['lesson_id'], video_data)
+                    #print "play_key:%s, lesson_id:%s, " % (play_key, lesson['lesson_id'])
+                    return decory_video.Video().decory(play_key, lesson_id, video_data)
 
                 try:
                     cto.download(filename, urls, func_decode=func_decode)
@@ -100,7 +101,13 @@ class Wejob(object, ):
               'lesson_type=course' \
               % (lesson_id, video_id)
         res = self.session.get(url).text
-        return re.findall(r'https.*', res)
+        get_key_url = None
+        for s in res.split(","):
+            arr = s.split("=")
+            if arr[0] == "URI":
+                get_key_url = arr[1]
+                break
+        return re.findall(r'https.*', res),  "http://edu.51cto.com/"+res.split("#")[6].split(",")[1].split('"')[1]
 
     def get_course_info(self, course_id):
         infos = []
